@@ -1,0 +1,6 @@
+# python files
+__pycache__/
+# development files
+.venv
+# local files
+dumps/
