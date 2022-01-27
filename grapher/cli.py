@@ -11,10 +11,10 @@ __version__ = "0.0.0"
 __name__ = "grapher"
 
 CONTENT = (
-    "total-karma",
-    "given-karma",
-    "taken-karma",
-    "total-points",
+    "karma",
+    "karma-given",
+    "karma-taken",
+    "points",
     "hug",
     "pet",
     "hyperpet",
@@ -133,6 +133,22 @@ class PointsScanner(DumpScanner):
     key: str = "points"
 
 
+class KarmaValueScanner(DumpScanner):
+    table_name: str = "boards_karma_members"
+    key: str = "value"
+
+
+class KarmaGivenScanner(DumpScanner):
+    table_name: str = "boards_karma_members"
+    key: str = "given"
+
+
+class KarmaTakenScanner(DumpScanner):
+    table_name: str = "boards_karma_members"
+    key: str = "taken"
+    raise ValueError(f"Unsupported content '{content}'.")
+
+
 class CSVWriter:
     key: str
     data: Dict[str, Any]
@@ -226,7 +242,7 @@ def main(args=sys.argv):
         if not force:
             sys.exit(os.EX_USAGE)
 
-    scanner = PointsScanner()
+    scanner = get_scanner(args.content)
     data = scanner.search(args.guild, args.user, files)
 
     writer = CSVWriter(scanner, data)
