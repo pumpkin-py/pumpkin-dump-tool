@@ -195,6 +195,11 @@ def main(args=sys.argv):
         type=str,
         help="path to output file",
     )
+    parser.add_argument(
+        "--allow-overwrite",
+        action="store_true",
+        help="overwrite old files without asking",
+    )
     #
     args = parser.parse_args()
     if args.content not in CONTENT:
@@ -209,9 +214,17 @@ def main(args=sys.argv):
         sys.exit(os.EX_USAGE)
 
     output = Path(args.output)
-    if output.is_file():
+    if output.is_file() and not args.allow_overwrite:
         print(f"File '{args.output}' already exists.")
-        sys.exit(os.EX_USAGE)
+        force: bool = None
+        while force is None:
+            overwrite = input("Overwrite? (yes/no) ")
+            if overwrite.lower() in ("y", "yes"):
+                force = True
+            if overwrite in ("n", "no"):
+                force = False
+        if not force:
+            sys.exit(os.EX_USAGE)
 
     scanner = PointsScanner()
     data = scanner.search(args.guild, args.user, files)
