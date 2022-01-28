@@ -48,14 +48,6 @@ class DumpScanner(ABC):
 
     parser_keys: List[str]
 
-    __slots__ = (
-        # static
-        "table_name",
-        "key",
-        # dynamic
-        "parser_keys",
-    )
-
     def __repr__(self) -> str:
         return f"{self.__class__.__name__} " f"table_name='{self.table_name}'>"
 
@@ -128,6 +120,46 @@ class DumpScanner(ABC):
         return values[self.key]
 
 
+class RelationsScanner(DumpScanner):
+    table_name: str = "fun_fun_relations"
+    key: str = "value"
+    constraint: str
+
+    parser_keys: List[str]
+
+    def search_file(self, guild_id: int, user_id: int, file: Path) -> Any:
+        """Search file for seeked value."""
+        reading: bool = False
+        counter: int = 0
+
+        with file.open("r") as handle:
+            for line in handle.readlines():
+                line = line.strip()
+                if line.startswith(f"COPY public.{self.table_name}"):
+                    self.set_parser_keys(line)
+                    reading = True
+                    continue
+
+                if reading is True and line == "":
+                    reading = False
+                    break
+
+                if not reading:
+                    continue
+
+                if (
+                    str(guild_id) not in line
+                    or str(user_id) not in line
+                    or self.constraint not in line
+                ):
+                    continue
+
+                values: Dict = self.get_parsed_values(line)
+                counter += values["value"]
+
+        return counter
+
+
 class PointsScanner(DumpScanner):
     table_name: str = "boards_points_users"
     key: str = "points"
@@ -146,6 +178,77 @@ class KarmaGivenScanner(DumpScanner):
 class KarmaTakenScanner(DumpScanner):
     table_name: str = "boards_karma_members"
     key: str = "taken"
+
+
+class RelationsHugScanner(RelationsScanner):
+    constraint: str = "hug"
+
+
+class RelationsPetScanner(RelationsScanner):
+    constraint: str = "pet"
+
+
+class RelationsHyperpetScanner(RelationsScanner):
+    constraint: str = "hyperpet"
+
+
+class RelationsHighfiveScanner(RelationsScanner):
+    constraint: str = "highfive"
+
+
+class RelationsSpankScanner(RelationsScanner):
+    constraint: str = "spank"
+
+
+class RelationsSlapScanner(RelationsScanner):
+    constraint: str = "slap"
+
+
+class RelationsBonkScanner(RelationsScanner):
+    constraint: str = "bonk"
+
+
+class RelationsWhipScanner(RelationsScanner):
+    constraint: str = "whip"
+
+
+class RelationsLickScanner(RelationsScanner):
+    constraint: str = "lick"
+
+
+class RelationsHyperlickScanner(RelationsScanner):
+    constraint: str = "hyperlick"
+
+
+def get_scanner(content: str):
+    if content == "karma":
+        return KarmaValueScanner()
+    if content == "given-karma":
+        return KarmaGivenScanner()
+    if content == "taken-karma":
+        return KarmaTakenScanner()
+    if content == "points":
+        return PointsScanner()
+    if content == "hug":
+        return RelationsHugScanner()
+    if content == "pet":
+        return RelationsPetScanner()
+    if content == "highfive":
+        return RelationsHighfiveScanner()
+    if content == "spank":
+        return RelationsSpankScanner()
+    if content == "slap":
+        return RelationsSlapScanner()
+    if content == "bonk":
+        return RelationsBonkScanner()
+    if content == "whip":
+        return RelationsWhipScanner()
+    if content == "hyperpet":
+        return RelationsHyperpetScanner()
+    if content == "lick":
+        return RelationsLickScanner()
+    if content == "hyperlick":
+        return RelationsHyperlickScanner()
     raise ValueError(f"Unsupported content '{content}'.")
 
 
@@ -161,7 +264,8 @@ class CSVWriter:
         with file.open("w") as handle:
             handle.write(f"timestamp,{self.key}\n")
             for key, value in self.data.items():
-                handle.write(f"{key},{value}\n")
+                key_: str = key.strftime("%Y-%m-%d")
+                handle.write(f"{key_},{value}\n")
 
 
 def main(args=sys.argv):
