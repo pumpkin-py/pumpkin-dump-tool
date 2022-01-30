@@ -79,6 +79,9 @@ class DumpScanner(ABC):
                 data_line = line
                 break
 
+        if not data_line:
+            return 0
+
         values: Dict[str, Union[str, int]] = self.get_parsed_values(data_line)
         return values[self.key]
 
