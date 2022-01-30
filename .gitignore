@@ -1,5 +1,6 @@
 # python files
 __pycache__/
+*.egg-info/
 # development files
 .venv
 # local files
