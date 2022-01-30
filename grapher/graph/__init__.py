@@ -2,7 +2,7 @@ import argparse
 import sys
 import os
 from pathlib import Path
-from typing import List
+from typing import Any, List
 
 import pygal
 
@@ -51,10 +51,32 @@ def run(args: argparse.Namespace):
         if not force:
             sys.exit(os.EX_USAGE)
 
-    graph(source, output)
+    chart = graph(source)
+    save(chart, output)
 
 
-def graph(source: Path, output: Path):
+def prepare_graph(
+    *,
+    title: str,
+    x_axis: List[Any],
+) -> pygal.graph.graph.Graph:
+    chart = pygal.Line(interpolate="cubic")
+
+    chart.title = title
+    chart.width = 1200
+    chart.height = 600
+    chart.style = pygal.style.LightStyle
+
+    chart.x_labels = x_axis
+    chart.x_label_rotation = 90
+    chart.x_labels_major_every = 7
+    chart.x_labels_major_count = int(len(x_axis) / 7)
+    chart.show_minor_x_labels = False
+
+    return chart
+
+
+def graph(source: Path) -> pygal.graph.graph.Graph:
     filename = source.name.replace(".csv", "")
     guild, user, content = filename.split("_")
 
@@ -67,14 +89,26 @@ def graph(source: Path, output: Path):
 
     values = [int(v[1]) for v in data[1:]]
 
-    chart = pygal.Line(width=1200, height=600, style=pygal.style.LightStyle)
-    chart.title = f"{content}\n{since} \N{EM DASH} {until}"
-
-    chart.x_labels = keys
-    chart.x_label_rotation = 90
-    chart.x_labels_major_every = 7
-    chart.x_labels_major_count = int(len(keys) / 7)
-    chart.show_minor_x_labels = False
+    chart = prepare_graph(
+        title=f"{content}\n{since} \N{EM DASH} {until}",
+        x_axis=keys,
+    )
 
     chart.add(content, values)
-    chart.render_to_file(output)
+
+    return chart
+
+
+def save(chart: pygal.graph.graph.Graph, output: Path):
+    if output.name.endswith("svg"):
+        chart.render_to_file(str(output))
+        return
+
+    # https://www.pygal.org/en/stable/documentation/output.html:
+    # In case of rendered image turning up black, installing
+    # lxml, tinycss and cssselect should fix the issue.
+    if output.name.endswith("png"):
+        chart.render_to_png(str(output))
+        return
+
+    raise ValueError("Only '.svg' and '.png' output is supported.")
