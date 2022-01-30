@@ -4,3 +4,6 @@ __pycache__/
 .venv
 # local files
 dumps/
+*.csv
+*.svg
+*.png
