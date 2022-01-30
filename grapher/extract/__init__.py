@@ -16,16 +16,16 @@ def register_parser(main_parser: argparse._SubParsersAction):
         allow_abbrev=False,
     )
     parser.add_argument(
-        "--user",
-        required=True,
-        type=int,
-        help="Discord user ID",
-    )
-    parser.add_argument(
         "--guild",
         required=True,
         type=int,
         help="Discord guild ID",
+    )
+    parser.add_argument(
+        "--user",
+        required=True,
+        type=int,
+        help="Discord user ID",
     )
     parser.add_argument(
         "--content",
