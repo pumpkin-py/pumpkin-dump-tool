@@ -17,7 +17,6 @@ def register_parser(main_parser: argparse._SubParsersAction):
         "source",
         type=str,
         help="path to source CSV",
-        default=".",
     )
     parser.add_argument(
         "output",
