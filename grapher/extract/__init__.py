@@ -34,15 +34,18 @@ def register_parser(main_parser: argparse._SubParsersAction):
         help="type of content (" + comma_separated_content() + ")",
     )
     parser.add_argument(
-        "directory",
+        "-d",
+        "--directory",
         type=str,
         help="path to dump directory",
         default=".",
     )
     parser.add_argument(
-        "output",
+        "-o",
+        "--output",
         type=str,
         help="path to output file",
+        default=None,
     )
     parser.add_argument(
         "--allow-overwrite",
@@ -70,6 +73,8 @@ def run(args: argparse.Namespace):
         print("No '*.sql' files were found.")
         sys.exit(os.EX_USAGE)
 
+    if args.output is None:
+        args.output = f"{args.guild}_{args.user}_{args.content}.csv"
     output = Path(args.output)
     if output.is_file() and not args.allow_overwrite:
         print(f"File '{args.output}' already exists.")
