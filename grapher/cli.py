@@ -1,24 +1,25 @@
 import argparse
 import sys
 
-from grapher import __version__
 
 from grapher.extract import register_parser as register_extract_options
 from grapher.extract import run as run_extract
 from grapher.graph import register_parser as register_graph_options
 from grapher.graph import run as run_graph
 
+VERSION = "0.0.1"
+
 
 def main(args=sys.argv):
     parser = argparse.ArgumentParser(
-        prog="grapher",
+        prog="pumpkin-grapher",
         allow_abbrev=False,
     )
     parser.add_argument(
         "-v",
         "--version",
         action="version",
-        version="%(prog)s " + __version__,
+        version="%(prog)s " + VERSION,
     )
 
     subparsers = parser.add_subparsers(dest="command")

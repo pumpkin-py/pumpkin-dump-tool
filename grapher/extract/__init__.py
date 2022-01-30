@@ -4,15 +4,31 @@ import os
 from pathlib import Path
 from typing import List
 
-from grapher import CONTENT, comma_separated_content
 from grapher.extract.scanners import get_scanner
 from grapher.extract.writers import CSVWriter
+
+CONTENT = (
+    "karma",
+    "karma-given",
+    "karma-taken",
+    "points",
+    "hug",
+    "pet",
+    "hyperpet",
+    "lick",
+    "hyperlick",
+    "spank",
+)
+
+
+def comma_separated_content() -> str:
+    return ", ".join(f"'{c}'" for c in CONTENT)
 
 
 def register_parser(main_parser: argparse._SubParsersAction):
     parser = main_parser.add_parser(
         "extract",
-        prog="grapher extract",
+        prog="pumpkin-grapher extract",
         allow_abbrev=False,
     )
     parser.add_argument(

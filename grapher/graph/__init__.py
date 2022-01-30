@@ -10,7 +10,7 @@ import pygal
 def register_parser(main_parser: argparse._SubParsersAction):
     parser = main_parser.add_parser(
         "graph",
-        prog="grapher graph",
+        prog="pumpkin-grapher graph",
         allow_abbrev=False,
     )
     parser.add_argument(
