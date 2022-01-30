@@ -50,7 +50,16 @@ def run(args: argparse.Namespace):
         if not force:
             sys.exit(os.EX_USAGE)
 
-    chart = graph(source)
+    try:
+        # assume default filename
+        series_name = source.name.split("_")[2].replace(".csv", "")
+    except Exception:
+        series_name = "data"
+
+    chart = graph(source, series_name=series_name)
+
+    chart.title = source.name + "\n" + chart.title
+
     save(chart, output)
 
 
@@ -72,15 +81,14 @@ def prepare_graph(
     chart.x_labels_major_count = int(len(x_axis) / 7)
     chart.show_minor_x_labels = False
 
+    chart._min = 0
+
     return chart
 
 
-def graph(source: Path) -> pygal.graph.graph.Graph:
-    filename = source.name.replace(".csv", "")
-    guild, user, content = filename.split("_")
-
+def graph(source: Path, series_name: str) -> pygal.graph.graph.Graph:
     with source.open("r") as handle:
-        data = [l.strip().split(",") for l in handle.readlines()]
+        data = [line.strip().split(",") for line in handle.readlines()]
 
     keys = [k[0] for k in data[1:]]
     since = keys[0]
@@ -89,11 +97,11 @@ def graph(source: Path) -> pygal.graph.graph.Graph:
     values = [int(v[1]) for v in data[1:]]
 
     chart = prepare_graph(
-        title=f"{content}\n{since} \N{EM DASH} {until}",
+        title=f"{since} \N{EM DASH} {until}",
         x_axis=keys,
     )
 
-    chart.add(content, values)
+    chart.add(series_name, values)
 
     return chart
 
