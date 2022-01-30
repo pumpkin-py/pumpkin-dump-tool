@@ -189,9 +189,9 @@ class RelationsHyperlickScanner(RelationsScanner):
 def get_scanner(content: str):
     if content == "karma":
         return KarmaValueScanner()
-    if content == "given-karma":
+    if content == "karma-given":
         return KarmaGivenScanner()
-    if content == "taken-karma":
+    if content == "karma-taken":
         return KarmaTakenScanner()
     if content == "points":
         return PointsScanner()
