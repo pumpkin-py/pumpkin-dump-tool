@@ -2,13 +2,15 @@
 
 CLI tool for creating graphs from pumpkin.py database dumps.
 
+The `cairosvg` requires system library `libcairo2`.
+
 
 ## Installation
 
 ```bash
 # get the code
 git clone git@github.com:pumpkin-py/pumpkin-dump-tool.git
-cd pumpkin-dump-grapher
+cd pumpkin-dump-tool
 # create virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
