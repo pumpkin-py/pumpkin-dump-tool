@@ -6,6 +6,15 @@ from typing import Any, List
 
 import pygal
 
+custom_style = pygal.style.Style(
+    background="#FFFFFF",
+    plot_background="transparent",
+    foreground="#222222",
+    foreground_strong="#332222",
+    foreground_subtle="#9F9F9F",
+    colors=("#44DB4D", "#4581DF", "#A660EC", "#E18282"),
+)
+
 
 def register_parser(main_parser: argparse._SubParsersAction):
     parser = main_parser.add_parser(
@@ -68,12 +77,12 @@ def prepare_graph(
     title: str,
     x_axis: List[Any],
 ) -> pygal.graph.graph.Graph:
-    chart = pygal.Line(interpolate="cubic")
+    chart = pygal.Line()
 
     chart.title = title
     chart.width = 1200
     chart.height = 600
-    chart.style = pygal.style.LightStyle
+    chart.style = custom_style
 
     chart.x_labels = x_axis
     chart.x_label_rotation = 90
@@ -81,6 +90,7 @@ def prepare_graph(
     chart.x_labels_major_count = int(len(x_axis) / 7)
     chart.show_minor_x_labels = False
 
+    chart.interpolate = "cubic"
     chart._min = 0
 
     return chart
