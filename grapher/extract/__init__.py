@@ -18,6 +18,9 @@ CONTENT = (
     "lick",
     "hyperlick",
     "spank",
+    "bonk",
+    "highfive",
+    "whip",
 )
 
 
