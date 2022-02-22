@@ -116,7 +116,7 @@ class RelationsScanner(DumpScanner):
                 if (
                     str(guild_id) not in line
                     or str(user_id) not in line
-                    or self.constraint not in line
+                    or "\t" + self.constraint + "\t" not in line
                 ):
                     continue
 
