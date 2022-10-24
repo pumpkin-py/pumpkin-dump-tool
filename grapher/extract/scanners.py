@@ -45,9 +45,16 @@ class DumpScanner(ABC):
         data: Dict[datetime.datetime, Any] = {}
 
         for file in files:
-            timestamp = datetime.datetime.strptime(
-                file.name, "dump_%Y-%m-%d_%H:%M:%S.sql"
-            )
+            try:
+                timestamp = datetime.datetime.strptime(
+                    file.name, "dump_%Y-%m-%d_%H-%M-%S.sql"
+                )
+            except ValueError:
+                # This is old-style format
+                # (changed in docs via 6874a80 on 2022-10-18)
+                timestamp = datetime.datetime.strptime(
+                    file.name, "dump_%Y-%m-%d_%H:%M:%S.sql"
+                )
             value = self.search_file(guild_id, user_id, file)
             data[timestamp] = value
 
